@@ -1,0 +1,52 @@
+# ============================
+# Python bytecode & cache
+# ============================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ============================
+# Virtual environments
+# ============================
+venv/
+env/
+.venv/
+
+# ============================
+# Environment variables
+# ============================
+.env
+.env.*
+
+# ============================
+# Output / generated files
+# ============================
+output/
+logs/
+*.log
+
+# ============================
+# Test & coverage artifacts
+# ============================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ============================
+# Build / distribution
+# ============================
+build/
+dist/
+*.egg-info/
+
+# ============================
+# IDE / Editor settings
+# ============================
+.vscode/
+.idea/
+.DS_Store
+
+# ============================
+# OS-specific
+# ============================
+Thumbs.db
