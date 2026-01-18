@@ -1,0 +1,18 @@
+2026-01-18 10:18:01 | IP=10.0.0.5 | user=alice | status=SUCCESS
+2026-01-18 10:19:12 | IP=10.0.0.8 | user=bob | status=FAIL
+2026-01-18 10:19:40 | IP=10.0.0.8 | user=bob | status=SUCCESS
+2026-01-18 10:21:03 | IP=10.0.0.12 | user=carol | status=SUCCESS
+2026-01-18 10:23:15 | IP=10.0.0.7 | user=dave | status=FAIL
+2026-01-18 10:23:55 | IP=10.0.0.7 | user=dave | status=SUCCESS
+
+2026-01-18 10:32:11 | IP=192.168.1.10 | user=admin | status=FAIL
+2026-01-18 10:32:18 | IP=192.168.1.10 | user=admin | status=FAIL
+2026-01-18 10:32:26 | IP=192.168.1.10 | user=admin | status=FAIL
+2026-01-18 10:32:34 | IP=192.168.1.10 | user=admin | status=FAIL
+2026-01-18 10:32:42 | IP=192.168.1.10 | user=admin | status=FAIL
+2026-01-18 10:32:50 | IP=192.168.1.10 | user=admin | status=FAIL
+
+2026-01-18 10:40:01 | IP=203.0.113.5 | user=admin | status=FAIL
+2026-01-18 10:40:08 | IP=203.0.113.5 | user=test | status=FAIL
+2026-01-18 10:40:14 | IP=203.0.113.5 | user=root | status=FAIL
+2026-01-18 10:40:21 | IP=203.0.113.5 | user=guest | status=FAIL
