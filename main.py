@@ -1,15 +1,6 @@
-"""
-Entry point for the SentinelForge log analysis pipeline.
-
-Responsibilities (Day 3):
-- Load authentication logs
-- Parse logs into structured events
-- Run brute-force detection
-- Display detected security alerts
-"""
-
 from analyzer.parser import parse_log_file
 from analyzer.detector import detect_bruteforce
+from analyzer.reporter import write_json_report
 
 
 def main() -> None:
@@ -18,6 +9,7 @@ def main() -> None:
     """
 
     log_file_path = "logs/sample_auth.log"
+    output_path = "output/alerts.json"
 
     #1: Parse logs
     parsed_logs = parse_log_file(log_file_path)
@@ -41,10 +33,19 @@ def main() -> None:
         for alert in alerts:
             print(f"[{alert['severity']}] {alert['type']} detected")
             print(f"IP Address   : {alert['ip']}")
-            print(f"Attempts     : {alert['attempts']} "
-                  f"in {alert['window_minutes']} minutes")
-            print(f"Time Window  : {alert['start_time']} → {alert['end_time']}")
+            print(
+                f"Attempts     : {alert['attempts']} "
+                f"in {alert['window_minutes']} minutes"
+            )
+            print(
+                f"Time Window  : "
+                f"{alert['start_time']} → {alert['end_time']}"
+            )
             print("-" * 60)
+
+        #3: Write alerts to JSON
+        write_json_report(alerts, output_path)
+        print(f"Alerts written to: {output_path}")
 
 
 if __name__ == "__main__":
