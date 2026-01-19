@@ -45,7 +45,7 @@ sentinelforge/
 │ ├── parser.py             # Log parsing and normalization
 │ ├── detectors.py          # Detection logic (next stage)
 │ ├── thresholds.py         # Tunable detection thresholds
-│ └── README.md            # Reporting and JSON serialization
+│ └── reporter.py           # Reporting and JSON serialization
 │
 ├── tests/
 │ ├── test_parser.py        # Unit tests for parser
