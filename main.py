@@ -1,17 +1,15 @@
 """
-main.py
-
 Entry point for the SentinelForge log analysis pipeline.
 
-Current responsibilities:
+Responsibilities (Day 3):
 - Load authentication logs
 - Parse logs into structured events
-- Display basic parsing summary
-
-Detection and reporting will be integrated in later stages.
+- Run brute-force detection
+- Display detected security alerts
 """
 
 from analyzer.parser import parse_log_file
+from analyzer.detector import detect_bruteforce
 
 
 def main() -> None:
@@ -21,6 +19,7 @@ def main() -> None:
 
     log_file_path = "logs/sample_auth.log"
 
+    #1: Parse logs
     parsed_logs = parse_log_file(log_file_path)
 
     print("=" * 60)
@@ -29,8 +28,23 @@ def main() -> None:
     print(f"Total parsed log entries: {len(parsed_logs)}")
     print()
 
-    for entry in parsed_logs:
-        print(entry)
+    #2: Run brute-force detection
+    alerts = detect_bruteforce(parsed_logs)
+
+    print("=" * 60)
+    print("SentinelForge — Security Alerts")
+    print("=" * 60)
+
+    if not alerts:
+        print("No brute-force activity detected.")
+    else:
+        for alert in alerts:
+            print(f"[{alert['severity']}] {alert['type']} detected")
+            print(f"IP Address   : {alert['ip']}")
+            print(f"Attempts     : {alert['attempts']} "
+                  f"in {alert['window_minutes']} minutes")
+            print(f"Time Window  : {alert['start_time']} → {alert['end_time']}")
+            print("-" * 60)
 
 
 if __name__ == "__main__":
