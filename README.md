@@ -45,6 +45,7 @@ sentinelforge/
 │ ├── parser.py             # Log parsing and normalization
 │ ├── detectors.py          # Detection logic (next stage)
 │ ├── thresholds.py         # Tunable detection thresholds
+│ └── README.md            # Reporting and JSON serialization
 │
 ├── tests/
 │ ├── test_parser.py        # Unit tests for parser
@@ -79,52 +80,55 @@ This format was chosen to:
 
 ---
 
-## Design Philosophy
+## Detection Logic (Brute-Force)
 
-### 1. Separation of Concerns
-- **Parsing** is isolated from **detection**
-- **Detection logic** will be isolated from **reporting**
+SentinelForge detects brute-force attacks by identifying **multiple failed authentication attempts originating from the same IP address within a short time window.**
 
-This mirrors real-world SOC pipelines and makes the system easier to reason about and extend.
+Rather than relying on total failure counts, the detection logic focuses on **rate-based behavior**, which is more indicative of automated attacks than normal user mistakes.
 
----
+Detection steps at a high level:
 
-### 2. Small, Explainable Data
-The dataset is intentionally small and curated.
+- Group failed authentication attempts by source IP
+- Sort attempts by timestamp
+- Apply a sliding time window
+- Trigger a high-severity alert when the threshold is exceeded
 
-This allows:
-- Manual verification of detections
-- Clear justification of alerts
-- Easier discussion of false positives and trade-offs
-
-The focus is on **signal quality**, not data volume.
+This approach mirrors how early-stage SIEM and SOC rules are commonly implemented.
 
 ---
 
-### 3. Defensive First
-SentinelForge is built from a **blue-team perspective**:
-- What patterns matter to defenders?
-- What can realistically be detected from logs alone?
-- How do we avoid noisy or misleading alerts?
+## Threshold Selection
+
+The default brute-force rule uses:
+
+- 5 failed attempts
+- Within 2 minutes
+- From the same IP
+
+These values are intentionally conservative:
+
+- Lower thresholds increase false positives (e.g., users mistyping passwords)
+- Higher thresholds risk missing fast, automated attacks
+
+All thresholds are centralized in thresholds.py and are designed to be **tuned based on environment and risk tolerance.**
 
 ---
 
-## Current Status
+## Reporting and Output
 
-### Implemented
-- Fault-tolerant authentication log parser
-- Regex-based field extraction
-- Datetime normalization
-- Unit tests for parsing logic
+Detected alerts are:
 
-### In Progress
-- Brute-force detection engine
-- Alert severity classification
-- JSON-based reporting
+- Displayed in a human-readable format on the console
+- Serialized to a machine-readable JSON file at:
+
+```bash
+output/alerts.json
+```
+Timestamps in JSON output are stored using **ISO 8601** format to support downstream systems such as dashboards, databases, or APIs.
 
 ---
 
-## How to Run (Current Stage)
+## How to Run 
 
 From the project root:
 
@@ -135,17 +139,25 @@ python3 main.py
 This will:
 
 - Parse the sample authentication logs
-- Print a structured summary of parsed events
+- Run brute-force detection
+- Print detected alerts
+- Write alerts to output/alerts.json
 
 ---
 
 ## Testing
 
-Parser unit tests can be run with:
+All core logic is covered by unit tests.
+
+Run tests with:
 ```bash
-python3 -m unittest tests/test_parser.py
+python3 -m unittest discover
 ```
-All tests must pass before detection logic is added.
+Tests validate:
+- Correct parsing
+- Time-window brute-force detection
+- False-positive avoidance
+- Deterministic alert behavior
 
 ---
 
@@ -156,7 +168,19 @@ All tests must pass before detection logic is added.
 - No MFA or geo-context is available
 - Shared or NATed IPs may cause false positives
 
-These limitations are intentional and discussed as part of detection trade-offs.
+These limitations are intentional and reflect the constraints of log-only detection.
+
+---
+
+## Scaling Considerations
+
+In a production environment, this approach would evolve by:
+- Processing streaming logs instead of static files
+- Maintaining sliding windows in memory or state stores
+- Offloading alerting to SIEM platforms or message queues
+- Combining rule-based detection with contextual signals
+
+Rule-based detection remains valuable due to its **explainability and low operational cost.**
 
 ---
 
@@ -168,15 +192,7 @@ It is meant to answer questions such as:
 
 - *How do you detect brute-force attacks from logs?*
 - *Why choose these thresholds?*
-- *How would this scale in production?*
-
----
-
-## Author Notes
-
-SentinelForge is a learning and demonstration project aligned with SOC analyst and junior security engineering roles.
-
-All design decisions are intentional and structured to be explainable during technical reviews and interviews.
+- *How detection logic can scale and evolve?*
 
 ---
 
